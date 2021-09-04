@@ -3,17 +3,22 @@ package com.example.coroutinedemo2
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             Log.i("TAG", "Calculation started ..")
-            val s1 = async { getStock1() }
-            val s2 = async { getStock2() }
+            // 계산만 백그라운드에서 실행
+            val s1 = async(Dispatchers.IO) {
+                getStock1()
+            }
+            val s2 = async(Dispatchers.IO) { getStock2() }
             val sum = s1.await() + s2.await()
+            Toast.makeText(applicationContext, "Total is $sum", Toast.LENGTH_SHORT).show()
             Log.i("TAG", "Calculation Value is .. $sum")
         }
     }
